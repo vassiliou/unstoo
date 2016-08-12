@@ -1,7 +1,19 @@
+import os
+import sys
 
 base_path = '/home/ubuntu/'
 
-vgg_path = '/home/ubuntu/vgg16.npy'
+TRAIN_PATH = os.path.join(base_path, 'train/')
+TEST_PATH = os.path.join(base_path, 'test/')
+MODELCHECKPOINTS_PATH = os.path.join(base_path, 'model-checkpoints/')
+PROBABILITIES_PATH = os.path.join(base_path, 'probability-outputs/')
+MASKOUTPUT_PATH = os.path.join(base_path, 'mask-output')
+MODEL_DEF_PATH = os.path.join(base_path, 'unstoo/model_definitions/')
+RECORD_DIRECTORY = TRAIN_PATH
+
+sys.path.append(MODEL_DEF_PATH)
+
+vgg_path = os.path.join(base_path, 'vgg16.npy')
 
 DOWNSAMPLE_FACTOR = 2
 

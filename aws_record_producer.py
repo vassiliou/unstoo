@@ -7,36 +7,19 @@ import os.path
 import glob
 from skimage import io
 from skimage import measure
-
+from settings import *
 
 ### Some flags:
 
-on_mac = False
-
 kaggle = False
 
-###
-
-INPUT_DIRECTORY = '/home/ubuntu/train'
-
-RECORD_DIRECTORY = '/home/ubuntu/train'
-
-if on_mac:
-    INPUT_DIRECTORY = '/Users/gus/Desktop/aws/3_validation_inputs'
-    RECORD_DIRECTORY = '/Users/gus/Desktop/aws/3_validation_records'  
-
 IMG_PATTERN = '*.tif'
-
-DOWNSAMPLE_FACTOR = 2
-
-pattern =  os.path.join(INPUT_DIRECTORY, IMG_PATTERN)
+pattern =  os.path.join(TRAIN_PATH, IMG_PATTERN)
 
 print(pattern)
 
 filepaths = sorted(glob.glob(pattern))
-
 img_paths = sorted([f for f in filepaths if 'mask' not in f])
-
 
 records = img_paths
 
@@ -57,4 +40,3 @@ for rec in records:
     write_path = os.path.join(RECORD_DIRECTORY,f_name)
     flat_record.astype('uint8').tofile(write_path)
     #print('{file}'.format(file=write_path))
-
