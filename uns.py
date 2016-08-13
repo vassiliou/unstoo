@@ -421,8 +421,8 @@ def uns_files(fileset, filetype, model_id=None):
     """fileset = 'train, validate, test, 'skip'
        filetype = 'records, images, masks, predictions'
        model_id = number eg. 901 for model_901"""
-    assert fileset in datasets.keys(), "fileset isn't one of" + ', '.join(datasets.keys())
-    assert filetype in fileformat.keys(), "filetype isn't one of" + ', '.join(fileformat.kets())
+    assert fileset in SETS.keys(), "fileset isn't one of" + ', '.join(SETS.keys())
+    assert filetype in FORMATS.keys(), "filetype isn't one of" + ', '.join(FORMATS.kets())
 
     modelname = 'model_' + model_id
     assert modelname in training.columns, "{} not in training.bin".format(modelname)

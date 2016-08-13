@@ -21,14 +21,14 @@ import tensorflow as tf
 ### Loading the model parameters
 
 import aws_fcn_model as model
-
+import uns
 from settings import *
 sys.path.append(MODEL_DEF_PATH)
 
 modelname = 'model_'+args.model_id
 mod = __import__(modelname)
 
-train_dir = os.path.join(MODELCHECKPOINTS_PATH,'/model_'+args.model_id+'_log')
+train_dir = os.path.join(MODELCHECKPOINTS_PATH,'model_'+args.model_id+'_log')
 os.makedirs(train_dir, exist_ok=True)
 
 ## put model params into namespace
@@ -54,9 +54,9 @@ weights = mod.weights
 random_fc8 = True
 
 if checkpath is not None:
-    	random_fc8 = False
-	checkpath = os.path.join(base_path,checkpath)
-	print('Retrieving model weights from ' +checkpath)
+    random_fc8 = False
+    checkpath = os.path.join(base_path,checkpath)
+    print('Retrieving model weights from ' +checkpath)
 
 filepaths = uns.uns_files('train', 'records', args.model_id)
 
@@ -146,10 +146,10 @@ def train():
                              examples_per_sec, sec_per_batch))
 
       if step % 20 == 0:
-	    ground_truth=np.logical_not(ground_truth[:,:,:,0])
-            dice = compute_dice(ground_truth,np.logical_not(pred_pixels))
-            print("Dice score this batch: " + str(dice))
-            moving_dice.append(dice)
+          ground_truth=np.logical_not(ground_truth[:,:,:,0])
+          dice = compute_dice(ground_truth,np.logical_not(pred_pixels))
+          print("Dice score this batch: " + str(dice))
+          moving_dice.append(dice)
 
       if step % 100 == 0:
         summary_str = sess.run(summary_op)
