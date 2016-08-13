@@ -8,9 +8,10 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
 import os
-#import glob
+import glob
 import pandas as pd
 import numpy as np
+
 from settings import *
 
 CM = plt.cm.inferno(np.arange(256))
@@ -399,6 +400,7 @@ class batch(list):
 
 def _testfile(path_format, *args, **kwargs):
     fnames = glob.glob(path_format.format('*'))
+    print(path_format.format('*'))
     indices = np.argsort([int(f.split('/')[-1].split('_')[0]) for f in fnames])
     orderedfnames = [fnames[i] for i in indices]
     return orderedfnames

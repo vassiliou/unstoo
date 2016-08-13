@@ -11,10 +11,11 @@ from settings import *
 
 ### Some flags:
 
-kaggle = False
+kaggle = True
 
 IMG_PATTERN = '*.tif'
-pattern =  os.path.join(TRAIN_PATH, IMG_PATTERN)
+pattern =  os.path.join(TEST_PATH, IMG_PATTERN)
+RECORD_DIRECTORY = TEST_PATH
 
 print(pattern)
 
@@ -39,4 +40,4 @@ for rec in records:
     f_name = os.path.splitext(f_name)[0]+'.rec'
     write_path = os.path.join(RECORD_DIRECTORY,f_name)
     flat_record.astype('uint8').tofile(write_path)
-    #print('{file}'.format(file=write_path))
+    print('{file}'.format(file=write_path))
