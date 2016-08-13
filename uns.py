@@ -400,8 +400,7 @@ class batch(list):
 
 def _testfile(path_format, *args, **kwargs):
     fnames = glob.glob(path_format.format('*'))
-    print(path_format.format('*'))
-    indices = np.argsort([int(f.split('/')[-1].split('_')[0]) for f in fnames])
+    indices = np.argsort([int(f.split('/')[-1].split('.')[0]) for f in fnames])
     orderedfnames = [fnames[i] for i in indices]
     return orderedfnames
 
