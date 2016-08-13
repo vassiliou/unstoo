@@ -16,7 +16,7 @@ args = parser.parse_args()
 import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
-
+from tensorflow.python.client import timeline
 
 ### Loading the model parameters
 
@@ -104,6 +104,7 @@ def train():
 
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.merge_all_summaries()
+    run_metadata = tf.RunMetadata()
 
     # Build an initialization operation to run below.
     init = tf.initialize_all_variables()
@@ -112,7 +113,8 @@ def train():
     sess = tf.Session(config=tf.ConfigProto(
         log_device_placement=log_device_placement))
     print('Initializing all variables...')
-    sess.run(init)
+    sess.run(init, options=tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE), 
+             run_metadata=run_metadata)
 
     if random_fc8 == False:
       saver.restore(sess,checkpath)
@@ -147,6 +149,10 @@ def train():
                       'sec/batch)')
         print (format_str % (datetime.now(), step, loss_value,
                              examples_per_sec, sec_per_batch))
+        tl = timeline.Timeline(run_metadata.step_stats)
+        ctf = tl.generate_chrome_trace_format()
+        with open('timeline.json', 'w') as f:
+                  f.write(ctf)
 
       if step % 20 == 0:
           ground_truth=np.logical_not(ground_truth[:,:,:,0])
