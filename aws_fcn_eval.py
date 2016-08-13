@@ -15,12 +15,12 @@ import aws_fcn_input as inpt
 
 import skimage.io
 
-
+import uns
 import sys
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("model_id")
-parset.add_argument("evaluate")
+parser.add_argument("evaluate")
 args = parser.parse_args()
 
 ### load up the model definition:
@@ -58,7 +58,7 @@ os.makedirs(prediction_directory, exist_ok=True)
 
 ### Setup paths to model checkpoint directory:
 
-checkpath = os.path.join(base_path, checkpath)
+checkpath = os.path.join(MODELCHECKPOINTS_PATH, modelname+'_log/', checkpath)
 print('Retrieving model weights from ' + checkpath)
 
 
@@ -67,13 +67,13 @@ print('Retrieving model weights from ' + checkpath)
 #pattern = os.path.join(RECORD_DIRECTORY, '*.rec')
 #print(pattern)
 #filepaths = sorted(glob.glob(pattern))
-if args.evaluate == 'validation':
+if args.evaluate == 'validate':
     filepaths = uns.uns_files('validate', 'records', args.model_id)
 elif args.evaluate == 'test':
     filepaths = uns.uns_files('test', 'records', args.model_id)
-elif args.evaluate == 'all'
-    filepaths = uns.uns_files('test', 'records', args.model_id) +
-                uns.uns_files('validate', 'records', args.model_id)
+elif args.evaluate == 'all':
+    filepaths = uns.uns_files('test', 'records', args.model_id) + uns.uns_files('validate', 'records', args.model_id)
+
 
 ####
 
@@ -117,7 +117,7 @@ def evalmodel(file_paths,bsize=1, source_dir=RECORD_DIRECTORY,target_directory=p
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
-    config.log_device_placement=FLAGS.log_device_placement
+    #config.log_device_placement=FLAGS.log_device_placement
     sess = tf.Session(config=config)
 
 
@@ -128,7 +128,7 @@ def evalmodel(file_paths,bsize=1, source_dir=RECORD_DIRECTORY,target_directory=p
 
     # Restore the model from the checkpoint
 
-    saver.restore(sess,FLAGS.checkpoint_path)
+    saver.restore(sess,checkpath)
 
     # Start the queue runners.
     print('Starting queue runners...', end='')
