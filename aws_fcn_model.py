@@ -3,20 +3,10 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-#from . import fcn_input
-#from . import fcn16_vgg
-#from .fcn16_vgg import FCN16VGG
-
-import aws_fcn_train as trn
 import aws_fcn_input
 import aws_fcn16_vgg
 from aws_fcn16_vgg import FCN16VGG
 from settings import *
-
-
-
-INITIAL_LEARNING_RATE = trn.learning_rate      # Initial learning rate.
-batch_size = trn.batch_size
 
 def _activation_summary(x):
   """Helper to create summaries for activations.
@@ -35,7 +25,7 @@ def _activation_summary(x):
   tf.histogram_summary(tensor_name + '/activations', x)
   tf.scalar_summary(tensor_name + '/sparsity', tf.nn.zero_fraction(x))
 
-  
+
 def _variable_with_weight_decay(name, shape, stddev, wd):
   """Helper to create an initialized Variable with weight decay.
 
@@ -61,7 +51,7 @@ def _variable_with_weight_decay(name, shape, stddev, wd):
 
 
 def inputs(filenames,batch_size,train=True):
-  
+
     return aws_fcn_input.inputs(filenames, train = train,
                                         batch_size=batch_size)
 
@@ -84,10 +74,10 @@ def inference(inputs,layer_shapes,train=True,random_fc8=True,vpath=vgg_path):
   # conv1
 
   net = FCN16VGG(layer_shapes,vgg16_npy_path=vpath)
-  
+
   with tf.name_scope('vgg_net') as scope:
     net.build(inputs,train=train,num_classes=2,random_init_fc8=random_fc8)
-  
+
   return net.upscore32, net.pred_up
 
 
@@ -113,8 +103,8 @@ def loss(logits, labels, num_classes,weights=None):
         #mask = tf.split(1,2,labels)[0]
         #mask_areas = tf.to_float(tf.reduce_sum(mask,reduction_indices=[1,2]))
         #pred_areas = tf.reduce_sum(logits,reduction_indices=[1,2])
-        
-        
+
+
         fl_logits = tf.reshape(logits, (-1, num_classes))
         epsilon = tf.constant(value=1e-4)
         fl_logits = fl_logits + epsilon
@@ -127,7 +117,7 @@ def loss(logits, labels, num_classes,weights=None):
         #mask_areas = tf.reduce_sum(mask,reduction_indices=[1,2])
 
         if weights is not None:
-             cross_entropy = -tf.reduce_sum(tf.mul(fl_labels * tf.log(softmax),weights), reduction_indices=[1])       
+             cross_entropy = -tf.reduce_sum(tf.mul(fl_labels * tf.log(softmax),weights), reduction_indices=[1])
         else:
             cross_entropy = -tf.reduce_sum(fl_labels * tf.log(softmax), reduction_indices=[1])
 
@@ -167,7 +157,7 @@ def _add_loss_summaries(total_loss):
   return loss_averages_op
 
 
-def train(total_loss, global_step):
+def train(total_loss, global_step, batch_size, INITIAL_LEARNING_RATE):
   """Train the model.
 
   Create an optimizer and apply to all trainable variables. Add moving

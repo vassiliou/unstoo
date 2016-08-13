@@ -3,11 +3,11 @@ from __future__ import division
 from __future__ import print_function
 
 from datetime import datetime
-import os.path
+import os
 import time
 import glob
 import sys
-
+from settings import *
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("model_id")
@@ -22,15 +22,15 @@ import tensorflow as tf
 
 import aws_fcn_model as model
 
-from settings import *
-def_path = os.path.join(base_path,'UNS2/code/model_definitions')
-sys.path.append(def_path)
 
+#def_path = os.path.join(base_path,'UNS2/code/model_definitions')
+#sys.path.append(def_path)
 
 mod = __import__('model_'+args.model_id)
 
-train_dir = os.path.join(base_path,'model-checkpoints/model_'+args.model_id+'_log')
-
+train_dir = os.path.join(MODELCHECKPOINTS_PATH,'model_'+args.model_id+'_log/')
+print(train_dir)
+os.makedirs(train_dir, exist_ok=True)
 ## put model params into namespace
 
 checkpath=mod.checkpath
@@ -47,16 +47,16 @@ layer_shapes=mod.layer_shapes
 DOWNSAMPLE_FACTOR = mod.DOWNSAMPLE_FACTOR
 
 NUM_CLASSES = mod.NUM_CLASSES
-weights = mod.weights 
+weights = mod.weights
 
 #### Setting up the checkpoint (if exists) and making sure fc8 is initialized correctly
 
 random_fc8 = True
 
 if checkpath is not None:
-    	random_fc8 = False
-	checkpath = os.path.join(base_path,checkpath)
-	print('Retrieving model weights from ' +checkpath)
+    random_fc8 = False
+    checkpath = os.path.join(base_path,checkpath)
+    print('Retrieving model weights from ' +checkpath)
 #### We need to get a hold of the filenames of the records to train on.  Eventually, we'll do this via uns. For debugging now, do it manually..
 
 pattern = os.path.join(base_path, 'train/*.rec')
@@ -85,17 +85,17 @@ def train():
     image_batch, mask_batch = model.inputs(filepaths,batch_size,train=train)
 
     mask_labels = tf.split(3, 2,mask_batch)[1]
-        
+
     # Build a Graph that computes the logits predictions from the
     # inference model.
     logits, pred_pix = model.inference(image_batch,layer_shapes,random_fc8)
-    
+
     # Calculate loss.
     loss = model.loss(logits, mask_batch,NUM_CLASSES,weights=np.array(weights))
 
     # Build a Graph that trains the model with one batch of examples and
     # updates the model parameters.
-    train_op = model.train(loss, global_step)
+    train_op = model.train(loss, global_step, batch_size, learning_rate)
 
     #accuracy = model.accuracy(logits,labels)
 
@@ -116,15 +116,15 @@ def train():
 
     if random_fc8 == False:
       saver.restore(sess,checkpath)
-    
+
     # Start the queue runners.
     tf.train.start_queue_runners(sess=sess)
     print('Starting queue runners...')
-    
+
     summary_writer = tf.train.SummaryWriter(train_dir, sess.graph)
 
     moving_dice=[]
-    
+
     for step in xrange(max_steps):
       start_time = time.time()
       #test = sess.run(fuse_pool)
@@ -149,11 +149,11 @@ def train():
                              examples_per_sec, sec_per_batch))
 
       if step % 20 == 0:
-	    ground_truth=np.logical_not(ground_truth[:,:,:,0])
-            dice = compute_dice(ground_truth,np.logical_not(pred_pixels))
-            print("Dice score this batch: " + str(dice))
-            moving_dice.append(dice)
-        
+          ground_truth=np.logical_not(ground_truth[:,:,:,0])
+          dice = compute_dice(ground_truth,np.logical_not(pred_pixels))
+          print("Dice score this batch: " + str(dice))
+          moving_dice.append(dice)
+
       if step % 100 == 0:
         summary_str = sess.run(summary_op)
         summary_writer.add_summary(summary_str, step)
