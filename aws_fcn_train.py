@@ -3,11 +3,11 @@ from __future__ import division
 from __future__ import print_function
 
 from datetime import datetime
-import os
+import os.path
 import time
 import glob
 import sys
-from settings import *
+
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("model_id")
@@ -22,15 +22,15 @@ import tensorflow as tf
 
 import aws_fcn_model as model
 
+from settings import *
+sys.path.append(MODEL_DEF_PATH)
 
-#def_path = os.path.join(base_path,'UNS2/code/model_definitions')
-#sys.path.append(def_path)
+modelname = 'model_'+args.model_id
+mod = __import__(modelname)
 
-mod = __import__('model_'+args.model_id)
-
-train_dir = os.path.join(MODELCHECKPOINTS_PATH,'model_'+args.model_id+'_log/')
-print(train_dir)
+train_dir = os.path.join(MODELCHECKPOINTS_PATH,'/model_'+args.model_id+'_log')
 os.makedirs(train_dir, exist_ok=True)
+
 ## put model params into namespace
 
 checkpath=mod.checkpath
@@ -54,14 +54,11 @@ weights = mod.weights
 random_fc8 = True
 
 if checkpath is not None:
-    random_fc8 = False
-    checkpath = os.path.join(base_path,checkpath)
-    print('Retrieving model weights from ' +checkpath)
-#### We need to get a hold of the filenames of the records to train on.  Eventually, we'll do this via uns. For debugging now, do it manually..
+    	random_fc8 = False
+	checkpath = os.path.join(base_path,checkpath)
+	print('Retrieving model weights from ' +checkpath)
 
-pattern = os.path.join(base_path, 'train/*.rec')
-print(pattern)
-filepaths = sorted(glob.glob(pattern))
+filepaths = uns.uns_files('train', 'records', args.model_id)
 
 ####
 
@@ -95,7 +92,7 @@ def train():
 
     # Build a Graph that trains the model with one batch of examples and
     # updates the model parameters.
-    train_op = model.train(loss, global_step, batch_size, learning_rate)
+    train_op = model.train(loss, global_step)
 
     #accuracy = model.accuracy(logits,labels)
 
@@ -149,10 +146,10 @@ def train():
                              examples_per_sec, sec_per_batch))
 
       if step % 20 == 0:
-          ground_truth=np.logical_not(ground_truth[:,:,:,0])
-          dice = compute_dice(ground_truth,np.logical_not(pred_pixels))
-          print("Dice score this batch: " + str(dice))
-          moving_dice.append(dice)
+	    ground_truth=np.logical_not(ground_truth[:,:,:,0])
+            dice = compute_dice(ground_truth,np.logical_not(pred_pixels))
+            print("Dice score this batch: " + str(dice))
+            moving_dice.append(dice)
 
       if step % 100 == 0:
         summary_str = sess.run(summary_op)

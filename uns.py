@@ -11,44 +11,18 @@ import os
 #import glob
 import pandas as pd
 import numpy as np
-
+from settings import *
 
 CM = plt.cm.inferno(np.arange(256))
 alpha =  np.linspace(0, 1, 256)
 CM[:,-1] = alpha
 CM = ListedColormap(CM)
 
-datafolder = "/Users/gus/CDIPS/nerve-project/"
-trainbin = "/Users/gus/CDIPS/uns/training.bin"
-
-if os.environ['USER'] == 'chrisv':
-    print(os.environ['USER'], end='')
-    try:
-        session =  os.environ['SESSION']
-    except KeyError:
-        session = 'mac'
-    finally:
-        if session == 'Lubuntu':
-            print(" on Lubuntu")
-            datafolder = '/home/chrisv/code'
-            trainbin = '/home/chrisv/code/uns/training.bin'
-            bottlefolder = '/home/chrisv/code/bottleneck_files'
-        else:
-            print(" on Mac")
-            trainbin = '/Users/chrisv/Code/CDIPS/uns/training.bin'
-            datafolder = "/Users/chrisv/Code/CDIPS"
-#            for k,v in sorted(os.environ.items()):
-#                print((k,v))
-
 # Usage:
 # image_pair(sub_im(subject,image))
 sub_im = lambda subject, img: pd.Series(data=[subject, img], index=['subject', 'img'])
 
-
-trainfolder = os.path.join(datafolder, 'train')
-testfolder = os.path.join(datafolder, 'test')
-
-training = pd.read_msgpack(trainbin)
+training = pd.read_msgpack(TRAINING_BIN_PATH)
 
 def dice(preds, truth):
     numer = 2*np.sum(np.logical_and(preds, truth))
@@ -83,7 +57,7 @@ class image():
 
     def load(self):
         """ Load image file """
-        return io.imread(os.path.join(trainfolder, self.filename))
+        return io.imread(os.path.join(TRAIN_PATH, self.filename))
 
     def load_rgb(self, trim=2):
         if trim>0:
@@ -420,6 +394,53 @@ class batch(list):
     def scores(self):
         scores = [imgpair.score for imgpair in self]
         return scores
+
+## Create a list of file names
+
+def _testfile(path_format, *args, **kwargs):
+    fnames = glob.glob(path_format.format('*'))
+    indices = np.argsort([int(f.split('/')[-1].split('_')[0]) for f in fnames])
+    orderedfnames = [fnames[i] for i in indices]
+    return orderedfnames
+
+def _unsfile(path_format, modelset, modelname):
+    return [path_format.format('{}_{}'.format(row[1]['subject'], row[1]['img']))
+            for row in training[training[modelname]==modelset].iterrows()]
+
+FORMATS = {'records': '{}.rec',
+           'images': '{}.tif',
+           'masks': '{}_mask.tif',
+           'predictions': '{}.npy'}
+
+SETS = {'train': (_unsfile, TRAIN_PATH),
+        'validate': (_unsfile, TRAIN_PATH),
+        'test': (_testfile, TEST_PATH),
+        'skip': (_unsfile, TRAIN_PATH)}
+
+def uns_files(fileset, filetype, model_id=None):
+    """fileset = 'train, validate, test, 'skip'
+       filetype = 'records, images, masks, predictions'
+       model_id = number eg. 901 for model_901"""
+    assert fileset in datasets.keys(), "fileset isn't one of" + ', '.join(datasets.keys())
+    assert filetype in fileformat.keys(), "filetype isn't one of" + ', '.join(fileformat.kets())
+
+    modelname = 'model_' + model_id
+    assert modelname in training.columns, "{} not in training.bin".format(modelname)
+
+    # predictions are stored elsewhere
+    if filetype == 'predictions':
+        path = os.path.join(PROBABILITIES_PATH, modelname)
+    else:
+        path = SETS[fileset][1]
+
+    pathformat = os.path.join(path, FORMATS[filetype])
+
+    # Determine the name of the files
+    fun = SETS[fileset][0]
+    return fun(pathformat, fileset, modelname)
+
+
+
 
 if __name__ == '__main__':
 

@@ -2,8 +2,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-import glob
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 from settings import *
@@ -68,7 +66,7 @@ def _generate_fcn_batch(img, mask, min_queue_examples,
         batch_size=batch_size,
         num_threads=num_preprocess_threads,
         capacity=min_queue_examples + 3 * batch_size)
-       
+
   # Display the images in the visualizer.
   tf.image_summary('images', img_batch)
   # Display the masks in the visualizer.
@@ -106,7 +104,7 @@ def inputs(filenames, batch_size,train=True):
   read_input = read_record(filename_queue)
 
   # Subtract off the mean and divide by the variance of the pixels??
- 
+
   # Ensure that the random shuffling has good mixing properties.
   min_fraction_of_examples_in_queue = 0.1
   min_queue_examples = int(NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN *
@@ -120,4 +118,3 @@ def inputs(filenames, batch_size,train=True):
   return _generate_fcn_batch(read_input.image, read_input.mask,
                                          min_queue_examples, batch_size,
                                          shuffle=train)
-

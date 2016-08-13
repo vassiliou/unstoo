@@ -9,6 +9,7 @@ MODELCHECKPOINTS_PATH = os.path.join(base_path, 'model-checkpoints/')
 PROBABILITIES_PATH = os.path.join(base_path, 'probability-outputs/')
 MASKOUTPUT_PATH = os.path.join(base_path, 'mask-output')
 MODEL_DEF_PATH = os.path.join(base_path, 'unstoo/model_definitions/')
+TRAINING_BIN_PATH = os.path.join(base_path, 'unstoo/training.bin')
 RECORD_DIRECTORY = TRAIN_PATH
 
 sys.path.append(MODEL_DEF_PATH)
