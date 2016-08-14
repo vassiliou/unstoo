@@ -7,7 +7,7 @@ Created on Sun Jul 24 15:33:05 2016
 
 model_name = '801'
 
-checkpath = #'model.ckpt-11000'
+checkpath = None #'model.ckpt-11000'
 
 log_device_placement = False
 
