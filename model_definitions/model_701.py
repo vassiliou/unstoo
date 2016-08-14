@@ -8,7 +8,7 @@ Created on Sun Jul 24 15:33:05 2016
 model_name = '701'
 
 # which checkpoint file to use when evaluating
-checkpath = None #'/home/chrisv/code/model-checkpoints/model_701_log/model.ckpt-5000'
+checkpath = '/home/chrisv/code/model-checkpoints/model_701_log/model.ckpt-39999'
 
 log_device_placement = False
 
