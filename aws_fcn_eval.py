@@ -94,7 +94,7 @@ def evalmodel(file_paths,bsize=1, source_dir=RECORD_DIRECTORY,target_directory=p
 
     # The model's predictions
 
-    logits, prediction = model.inference(image_batch,layer_shapes,train=False,random_fc8=False)
+    logits, prediction = model.inference(image_batch,layer_shapes,train=False,random_fc8=True)
 
     pixel_probabilities = tf.reshape( tf.nn.softmax(tf.reshape(logits, (-1, NUM_CLASSES))) , (-1,210,290,NUM_CLASSES))
 
