@@ -331,12 +331,26 @@ class image_pair(object):
            pred.plot_contour(ax=ax, label=k)
 
 
+
+
 def plot_pca_comps(P, ncomp, *args, **kwargs):
-    fig = plt.figure()
-    for i in np.arange(ncomp):
-        for j in np.arange(i, ncomp):
-            ax = fig.subplot(ncomp-1, ncomp-1, j+i*(ncomp-1))
-            ax.scatter(P[:,i], P[:,j], *args, **kwargs)
+    nplots = ncomp-1
+    fig, ax = plt.subplots(nrows=nplots, ncols=nplots,
+                           sharey='row', sharex='col',
+                           figsize=kwargs.pop('figsize',(6,6)))
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    for i, row in enumerate(ax):
+        for j, axij in enumerate(row):
+            axij.scatter(P[:,j], P[:,i+1], *args, **kwargs)
+            if j>i:
+                axij.remove()
+
+    # Label outer axes
+    for i in range(nplots):
+        ax[i,0].set_ylabel('C {}'.format(i+1))
+        ax[nplots-1,i].set_xlabel('C {}'.format(i))
+
 
 class batch(list):
     def __init__(self, rows, pred=None):
