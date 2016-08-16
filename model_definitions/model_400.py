@@ -7,7 +7,7 @@ Created on Sun Jul 24 15:33:05 2016
 
 model_name = '400'
 
-checkpath = None
+checkpath = '/home/chrisv/code/model-checkpoints/model_400_log/model.ckpt-18000'
 
 log_device_placement = False
 
@@ -24,8 +24,4 @@ layer_shapes=(FC6_SHAPE, FC7_SHAPE, FC8_SHAPE)
 DOWNSAMPLE_FACTOR = 2
 
 NUM_CLASSES = 2
-weights = [10,1] 
-
-
-
-
+weights = [10,1]

@@ -2,7 +2,7 @@ from model_701 import *
 
 model_name = '702'
 
-checkpath = '/home/chrisv/code/model-checkpoints/model_701_log/model.ckpt-39999'
+checkpath = '/home/chrisv/code/model-checkpoints/model_702_log/model.ckpt-5000'
 
 weights = [100,1]
 
