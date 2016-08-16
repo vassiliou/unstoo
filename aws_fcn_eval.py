@@ -67,12 +67,7 @@ print('Retrieving model weights from ' + checkpath)
 #pattern = os.path.join(RECORD_DIRECTORY, '*.rec')
 #print(pattern)
 #filepaths = sorted(glob.glob(pattern))
-if args.evaluate == 'validate':
-    filepaths = uns.uns_files('validate', 'records', args.model_id)
-elif args.evaluate == 'test':
-    filepaths = uns.uns_files('test', 'records', args.model_id)
-elif args.evaluate == 'all':
-    filepaths = uns.uns_files('test', 'records', args.model_id) + uns.uns_files('validate', 'records', args.model_id)
+filepaths = uns.uns_files(args.evaluate, 'records', args.model_id)
 
 
 ####

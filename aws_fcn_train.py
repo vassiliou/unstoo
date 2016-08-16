@@ -41,6 +41,11 @@ max_steps=mod.max_steps
 FC6_SHAPE=mod.FC6_SHAPE
 FC7_SHAPE=mod.FC7_SHAPE
 FC8_SHAPE=mod.FC8_SHAPE
+try:
+    randomize = mod.randomize
+except AttributeError:
+    randomize = False
+
 
 layer_shapes=mod.layer_shapes
 

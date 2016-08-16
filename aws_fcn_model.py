@@ -50,10 +50,10 @@ def _variable_with_weight_decay(name, shape, stddev, wd):
 
 
 
-def inputs(filenames,batch_size,train=True):
+def inputs(filenames,batch_size,train=True, randomize=False):
 
     return aws_fcn_input.inputs(filenames, train = train,
-                                        batch_size=batch_size)
+                                        batch_size=batch_size, randomize=randomize)
 
 
 ### helpers to build layers

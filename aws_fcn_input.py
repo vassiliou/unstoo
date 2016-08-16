@@ -7,7 +7,7 @@ import tensorflow as tf
 from settings import *
 
 
-def read_record(filename_queue):
+def read_record(filename_queue, randomize=False):
     class FCNRecord(object):
         pass
     result = FCNRecord()
@@ -24,9 +24,16 @@ def read_record(filename_queue):
     record_bytes = tf.decode_raw(value, tf.uint8)
     #print(record_bytes.get_shape())
     int_image = tf.reshape(tf.slice(record_bytes, [0], [img_len]),[result.mask_height, result.mask_width])
+
     rgb_image = tf.pack([int_image,int_image,int_image])
     rgb_img = tf.transpose(rgb_image,(1,2,0))
-    result.image = tf.cast(rgb_img,tf.float32)
+    float_image = tf.cast(rgb_img,tf.float32)
+    if randomize:
+        distorted_image = tf.image.random_brightness(distorted_image, max_delta=50)
+        distorted_image = tf.image.random_contrast(distorted_image,lower=0.2, upper=1.8)
+        float_image = tf.image.per_image_whitening(distorted_image)
+
+    result.image = float_image
     bool_mask = tf.cast( tf.reshape(tf.slice(record_bytes, [img_len], [mask_len]),[result.mask_height, result.mask_width]), tf.bool)
     hot_mask= tf.pack( [bool_mask, tf.logical_not(bool_mask)])
     h_mask = tf.transpose(hot_mask,(1,2,0))
@@ -76,7 +83,7 @@ def _generate_fcn_batch(img, mask, min_queue_examples,
   return img_batch, mask_batch
 
 
-def inputs(filenames, batch_size,train=True):
+def inputs(filenames, batch_size,train=True, randomize=False):
   """Construct input for evaluation using the Reader ops.
 
   Args:
@@ -101,7 +108,7 @@ def inputs(filenames, batch_size,train=True):
     filename_queue = tf.train.string_input_producer(filenames,shuffle=False)
 
   # Read examples from files in the filename queue.
-  read_input = read_record(filename_queue)
+  read_input = read_record(filename_queue, randomize=randomize)
 
   # Subtract off the mean and divide by the variance of the pixels??
 
