@@ -27,11 +27,10 @@ def read_record(filename_queue, randomize=False):
 
     rgb_image = tf.pack([int_image,int_image,int_image])
     rgb_img = tf.transpose(rgb_image,(1,2,0))
-    distorted_image = tf.cast(rgb_img,tf.float32)
+    float_image = tf.cast(rgb_img,tf.float32)
     if randomize:
-        distorted_image = tf.image.random_brightness(distorted_image, max_delta=50)
-        distorted_image = tf.image.random_contrast(distorted_image,lower=0.5, upper=1.5)
-        float_image = tf.image.per_image_whitening(distorted_image)
+        float_image = tf.image.random_brightness(float_image, max_delta=50)
+        float_image = tf.image.random_contrast(float_image,lower=0.5, upper=1.5)
 
     result.image = float_image
     bool_mask = tf.cast( tf.reshape(tf.slice(record_bytes, [img_len], [mask_len]),[result.mask_height, result.mask_width]), tf.bool)
