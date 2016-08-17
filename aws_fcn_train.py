@@ -43,9 +43,10 @@ FC7_SHAPE=mod.FC7_SHAPE
 FC8_SHAPE=mod.FC8_SHAPE
 try:
     randomize = mod.randomize
+    print("!! Randomize !!")
 except AttributeError:
     randomize = False
-
+    print("!! Plain !!")
 
 layer_shapes=mod.layer_shapes
 
@@ -84,7 +85,7 @@ def train():
     global_step = tf.Variable(0, trainable=False)
 
     # Get the input  data.
-    image_batch, mask_batch = model.inputs(filepaths,batch_size,train=train)
+    image_batch, mask_batch = model.inputs(filepaths,batch_size,train=train, randomize=randomize)
 
     mask_labels = tf.split(3, 2,mask_batch)[1]
 

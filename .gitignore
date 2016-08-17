@@ -3,3 +3,4 @@ settings.py
 .DS_Store
 .ipynb_checkpoints
 __pycache__
+SetupModel-CV.ipynb
