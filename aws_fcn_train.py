@@ -43,9 +43,12 @@ FC7_SHAPE=mod.FC7_SHAPE
 FC8_SHAPE=mod.FC8_SHAPE
 try:
     randomize = mod.randomize
-    print("!! Randomize !!")
 except AttributeError:
     randomize = False
+
+if randomize:
+    print("!! Randomize !!")
+else:
     print("!! Plain !!")
 
 layer_shapes=mod.layer_shapes
