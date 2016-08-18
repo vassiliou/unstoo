@@ -440,7 +440,7 @@ def uns_files(fileset, filetype, model_id=None):
     assert filetype in FORMATS.keys(), "filetype isn't one of" + ', '.join(FORMATS.kets())
 
     modelname = 'model_' + model_id
-    assert modelname in training.columns, "{} not in training.bin".format(modelname)
+    #assert modelname in training.columns, "{} not in training.bin".format(modelname)
 
     # predictions are stored elsewhere
     if filetype == 'predictions':

@@ -1,10 +1,11 @@
 # model runner
 
-python aws_fcn_eval.py 810 validate
-python aws_fcn_eval.py 811 validate
-python aws_fcn_eval.py 820 validate
-python aws_fcn_eval.py 821 validate
-python aws_fcn_eval.py 822 validate
+
+
+#python aws_fcn_eval.py 801 test
+#python aws_fcn_eval.py 903 test
+python aws_fcn_eval.py 820 test
+
 
 #python aws_fcn_eval.py 910 validate
 #python aws_fcn_eval.py 911 validate
