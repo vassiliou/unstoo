@@ -2,7 +2,7 @@ from model_901 import *
 
 model_name = '920'
 
-checkpath = None #'/home/chrisv/code/model-checkpoints/model_804_log/model.ckpt-9000'
+checkpath ='/home/chrisv/code/model-checkpoints/model_920_log/model.ckpt-4999'
 
 weights = [100,1]
 max_steps = 5000
